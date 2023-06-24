@@ -31,7 +31,7 @@ jobs:
           bundle install --jobs=4
       - name: Update index
         run: |
-          bundle exec ruby Scripts/update-index.rb --pod "${{ inputs.pod }}" --version "${{ inputs.version }}" --action "${{ inputs.action }}" --path "${{ inputs.path }}"
+          bundle exec ruby Scripts/update-index.rb --sha "${{ inputs.sha }}"
 
       # - name: Deploy to Pages
       #   if: github.event_name == 'schedule'
@@ -58,22 +58,10 @@ jobs:
 on:
   workflow_dispatch:
     inputs:
-      pod:
-        description: 'The pod to be updated'
+      sha:
+        description: 'Spec repo commit SHA'
         required: true
         type: string
-      version:
-        description: 'The version of the pod to update'
-        required: true
-        type: string
-      podspec_path:
-        description: 'The path to the podspec in the spec repo'
-        required: true
-        type: string
-      action:
-        description: 'The action to perform'
-        required: true
-        type: string  
   # repository_dispatch:
   #   types: 
   #     - cronjob
