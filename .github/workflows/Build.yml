@@ -29,9 +29,9 @@ jobs:
         run: |
           bundle config path vendor/bundle
           bundle install --jobs=4
-      - name: Build indices
+      - name: Update index
         run: |
-          Scripts/build.sh "${{ github.event.client_payload.payload }}"
+          bundle exec ruby Scripts/update-index.rb --pod "${{ inputs.pod }}" --version "${{ inputs.version }}" --action "${{ inputs.action }}" --path "${{ inputs.path }}"
 
       # - name: Deploy to Pages
       #   if: github.event_name == 'schedule'
@@ -56,11 +56,28 @@ jobs:
       #     path: ./_specs/_site/*
 
 on:
-  push:
-  repository_dispatch:
-    types: 
-      - cronjob
-      - trunk-webhook
+  workflow_dispatch:
+    inputs:
+      pod:
+        description: 'The pod to be updated'
+        required: true
+        type: string
+      version:
+        description: 'The version of the pod to update'
+        required: true
+        type: string
+      podspec_path:
+        description: 'The path to the podspec in the spec repo'
+        required: true
+        type: string
+      action:
+        description: 'The action to perform'
+        required: true
+        type: string  
+  # repository_dispatch:
+  #   types: 
+  #     - cronjob
+  #     - trunk-webhook
   # schedule:
   #   - cron:  '* * * * *' # max frequency specified because the actual frequency is determined by GH Actions rate limit  
   #     branches:
